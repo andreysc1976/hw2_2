@@ -1,8 +1,11 @@
 package com.andreysc.hw2_2;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,6 +13,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final int INPUT_NUMBER = 1;
     public static final int INPUT_ACTION = 2;
+    public static final String LAST_INPUT_PARAM="LAST_INPUT_PARAM_CALC";
+    public static final String CALC_PARAM="CALC_PARAM";
 
     private Calc calc;
 
@@ -96,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lastInput=INPUT_ACTION;
         if (savedInstanceState==null){
             calc = new Calc();
+
+        } else {
+            lastInput=savedInstanceState.getInt(LAST_INPUT_PARAM,INPUT_ACTION);
+            calc = savedInstanceState.getParcelable(CALC_PARAM);
+            if (calc==null){
+                calc = new Calc();
+            }
         }
         inputText=calc.getOutputString();
         updateTextView();
@@ -151,4 +163,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        calc.setOutputString(inputText);
+        outState.putInt(LAST_INPUT_PARAM,lastInput);
+        outState.putParcelable(CALC_PARAM,calc);
+    }
+
 }

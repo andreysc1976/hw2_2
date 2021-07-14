@@ -1,8 +1,11 @@
 package com.andreysc.hw2_2;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
-public class Calc implements Serializable {
+public class Calc implements Parcelable {
     private Float firstValue;
     private Float secondValue;
     private Float result;
@@ -26,12 +29,40 @@ public class Calc implements Serializable {
         this.outputString=secondValue.toString();
     }
 
-    public void setAction(int action) {
-        this.action = action;
+    protected Calc(Parcel in) {
+        if (in.readByte() == 0) {
+            firstValue = null;
+        } else {
+            firstValue = in.readFloat();
+        }
+        if (in.readByte() == 0) {
+            secondValue = null;
+        } else {
+            secondValue = in.readFloat();
+        }
+        if (in.readByte() == 0) {
+            result = null;
+        } else {
+            result = in.readFloat();
+        }
+        outputString = in.readString();
+        action = in.readInt();
     }
 
-    public Float getFirstValue() {
-        return firstValue;
+    public static final Creator<Calc> CREATOR = new Creator<Calc>() {
+        @Override
+        public Calc createFromParcel(Parcel in) {
+            return new Calc(in);
+        }
+
+        @Override
+        public Calc[] newArray(int size) {
+            return new Calc[size];
+        }
+    };
+
+    public void setAction(int action) {
+        this.action = action;
     }
 
     public void setFirstValue(Float firstValue) {
@@ -48,6 +79,10 @@ public class Calc implements Serializable {
 
     public String getOutputString() {
         return outputString;
+    }
+
+    public void setOutputString(String outputString) {
+        this.outputString = outputString;
     }
 
     public int getAction() {
@@ -81,5 +116,34 @@ public class Calc implements Serializable {
         if (outputString==""){
             outputString=secondValue.toString();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (firstValue == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(firstValue);
+        }
+        if (secondValue == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(secondValue);
+        }
+        if (result == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(result);
+        }
+        dest.writeString(outputString);
+        dest.writeInt(action);
     }
 }
