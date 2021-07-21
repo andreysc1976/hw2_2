@@ -19,4 +19,8 @@
     <string name="def_calc_value">0.00</string>
     <string name="imagebg">BG IMAGE</string>
     <string name="theme_select_text">Ночная тема</string>
+    <string name="property">Настройки</string>
+    <string name="apply">Применить</string>
+    <string name="white">Светлая</string>
+    <string name="dark">Темная</string>
 </resources>

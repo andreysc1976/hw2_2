@@ -182,16 +182,4 @@
         app:layout_constraintStart_toEndOf="@+id/buttonNumber9"
         app:layout_constraintTop_toTopOf="@+id/buttonNumber9" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/toggleThemeButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/theme_select_text"
-        android:layout_marginStart="@dimen/defaultMargin"
-        android:layout_marginEnd="@dimen/defaultMargin"
-        android:layout_marginBottom="@dimen/defaultMargin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
