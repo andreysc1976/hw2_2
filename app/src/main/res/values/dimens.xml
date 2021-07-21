@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="defaultMargin">8dp</dimen>
+    <dimen name="defaultFontSizeEditText">32sp</dimen>
+    <dimen name="defaulFontSizeButton">24sp</dimen>
+</resources>

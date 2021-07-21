@@ -4,17 +4,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static final String PREF_NAME="MY_CALC_PREF";
+    public static final String PREF_THEME="THEME_PREF";
+    private static final int DEFAULT_THEME = 1;
+
+    private static final int DAY_THEME=1;
+    public static final int NIGHT_THEME=2;
 
     public static final int INPUT_NUMBER = 1;
     public static final int INPUT_ACTION = 2;
     public static final String LAST_INPUT_PARAM="LAST_INPUT_PARAM_CALC";
     public static final String CALC_PARAM="CALC_PARAM";
+
 
     private Calc calc;
 
@@ -95,7 +107,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        int savedTheme = getSavedThemeValue();
+        setTheme(getThemeId(savedTheme));
+
         setContentView(R.layout.calc2_layout);
+
+        if (savedTheme==NIGHT_THEME){
+            SwitchMaterial tb = findViewById(R.id.toggleThemeButton);
+            tb.setChecked(true);
+        }
+
         textView = findViewById(R.id.calcLine);
         setAllClickListener();
         lastInput=INPUT_ACTION;
@@ -111,7 +133,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         inputText=calc.getOutputString();
         updateTextView();
+
+        findViewById(R.id.toggleThemeButton).setOnClickListener(v -> {
+            SwitchMaterial tb = findViewById(R.id.toggleThemeButton);
+            if (tb.isChecked()){
+                updateThemes(NIGHT_THEME);
+            } else {
+                updateThemes(DAY_THEME);
+            }
+        });
     }
+
+    private int getThemeId(int savedTheme) {
+        if (savedTheme == NIGHT_THEME) {
+            return R.style.Theme_Hw2_2_Nigth;
+        } else {
+            return R.style.Theme_Hw2_2;
+        }
+    }
+
+
+
+    private void updateThemes(int themeValue) {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+        sharedPreferences.edit().
+                putInt(PREF_THEME,themeValue).
+                commit();
+        recreate();
+    }
+
+    private int getSavedThemeValue() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+        return sharedPreferences.getInt(PREF_THEME,DEFAULT_THEME);
+    }
+
 
     private void updateTextView(){
         textView.setText(inputText);
