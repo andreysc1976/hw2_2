@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -19,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String PREF_THEME="THEME_PREF";
     private static final int DEFAULT_THEME = 1;
 
-    private static final int DAY_THEME=1;
+    public static final int DAY_THEME=1;
     public static final int NIGHT_THEME=2;
 
     public static final int INPUT_NUMBER = 1;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String inputText;
     private TextView textView;
     private int lastInput;
+    private int activeTheme;
 
     private void equalsCalc(){
         calc.setFirstValue(calc.getSecondValue());
@@ -114,8 +118,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.calc2_layout);
 
         if (savedTheme==NIGHT_THEME){
-            SwitchMaterial tb = findViewById(R.id.toggleThemeButton);
-            tb.setChecked(true);
+            //SwitchMaterial tb = findViewById(R.id.toggleThemeButton);
+            //tb.setChecked(true);
         }
 
         textView = findViewById(R.id.calcLine);
@@ -133,15 +137,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         inputText=calc.getOutputString();
         updateTextView();
-
-        findViewById(R.id.toggleThemeButton).setOnClickListener(v -> {
-            SwitchMaterial tb = findViewById(R.id.toggleThemeButton);
-            if (tb.isChecked()){
-                updateThemes(NIGHT_THEME);
-            } else {
-                updateThemes(DAY_THEME);
-            }
-        });
     }
 
     private int getThemeId(int savedTheme) {
@@ -159,12 +154,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferences.edit().
                 putInt(PREF_THEME,themeValue).
                 commit();
+        activeTheme = themeValue;
         recreate();
     }
 
     private int getSavedThemeValue() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-        return sharedPreferences.getInt(PREF_THEME,DEFAULT_THEME);
+
+        activeTheme =  sharedPreferences.getInt(PREF_THEME,DEFAULT_THEME);
+        return activeTheme;
     }
 
 
@@ -227,4 +225,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         outState.putParcelable(CALC_PARAM,calc);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==R.id.openProperty)
+        {
+            Intent intent = new Intent(this,PropertyActivity.class);
+            intent.putExtra(PREF_THEME,activeTheme);
+            startActivityForResult(intent,20);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode!=20) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+        if (resultCode==20){
+            int theme = data.getExtras().getInt(PREF_THEME);
+            updateThemes(theme);
+        }
+    }
 }
